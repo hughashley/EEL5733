@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 	//input buffer
 	char *buf = NULL;
 	size_t bufsz;
-	ssize_t line_in;
+	ssize_t line_in_size;
 	//regular expression
 	char appt[6][1024];
 	char comp[strlen("Subject:")+1];
@@ -16,13 +16,13 @@ int main(int argc, char *argv[]){
 	//working variable
 
 	file = fopen("test.txt", "r");
-	line_in = getline(&buf, &bufsz, file);
+	line_in_size = getline(&buf, &bufsz, file);
 
 
-	while (line_in >= 0){
+	while (line_in_size >= 0){
 
 		printf("%s", buf);
-		line_in = getline(&buf, &bufsz, file);
+		line_in_size = getline(&buf, &bufsz, file);
 
 
 	};
