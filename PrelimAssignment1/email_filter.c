@@ -1,4 +1,4 @@
-#import "email_filter.h"
+#include "email_filter.h"
 
 
 int main(int argc, char *argv[]){
