@@ -1,4 +1,10 @@
-#include "filter.h"
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <stdlib.h>
+
+
+#define SIZE 1024
 
 struct event {
 	char date[SIZE];
