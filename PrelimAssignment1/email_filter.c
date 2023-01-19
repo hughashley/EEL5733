@@ -5,22 +5,16 @@ int main(int argc, char *argv[]){
 
 
 
-	char *buf;
-	char *token;
-	char *action;
-	char *subject;
-	char *date;
-	char *time;
-	char *location;
+	char *buf =  malloc(SIZE);
+	char *token = malloc(SIZE);
+	char *action = malloc(SIZE);
+	char *title = malloc(SIZE);
+	char *date = malloc(SIZE);
+	char *time = malloc(SIZE);
+	char *location = malloc(SIZE);
 	static char *wsbuf = "        ";
 	size_t bufsz;
 	ssize_t line_in_size;
-
-
-
-
-	char comp[strlen("Subject:")+1];
-	strcpy(comp,"Subject:");
 
 
 	line_in_size = getline(&buf, &bufsz, stdin);
@@ -41,23 +35,39 @@ int main(int argc, char *argv[]){
 				continue;
 			};
 			token = strtok(NULL, ",");
-			strcpy(subject, token);
+			if(token==NULL){
+				line_in_size = getline(&buf, &bufsz, stdin);
+				continue;
+			};
+			strcpy(title, token);
 			token = strtok(NULL, ",");
+			if(token==NULL){
+				line_in_size = getline(&buf, &bufsz, stdin);
+				continue;
+			};
 			strcpy(date,token);
 			token = strtok(NULL, ",");
+			if(token==NULL){
+				line_in_size = getline(&buf, &bufsz, stdin);
+				continue;
+			};
 			strcpy(time,token);
 			token = strtok(NULL, ",");
+			if(token==NULL){
+				line_in_size = getline(&buf, &bufsz, stdin);
+				continue;
+			};
 			strcpy(location,token);
 
-//			if(token==NULL){
-//				line_in_size = getline(&buf, &bufsz, stdin);
-//				continue;
-//			};
 
-			strncat(subject, wsbuf, 10-strlen(subject));
+			if (strlen(title)<10){
+			strncat(title, wsbuf, 10-strlen(title));
+			};
+			if (strlen(location)<10){
 			strncat(location, wsbuf, 10-strlen(location));
+			};
 
-			printf("%s,%s,%s,%s,%s\n", action, subject, date, time, location);
+			printf("%s,%s,%s,%s,%s\n", action, title, date, time, location);
 
 
 
