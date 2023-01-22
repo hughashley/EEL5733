@@ -28,7 +28,7 @@ int main(int argc, char *argv[]){
 			//replace stdin with read side of pipe using dup2.  saves one line of code over closing stdin and using dup.
 			dup2(fd[0], 0);
 			close (fd[0]);
-			execl("./calendar_filter", "");
+			execl("./calendar_filter", (char*)NULL);
 			wait(NULL);
 		}
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
 			//replace stdout with write side of pipe using dup2.  saves one line of code over closing stdout and using dup.
 			dup2(fd[1], 1);
 			close (fd[1]);
-			execl("./email_filter", "");
+			execl("./email_filter", (char*)NULL);
 			wait(NULL);
 		}
 
