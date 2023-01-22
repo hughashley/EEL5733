@@ -52,7 +52,6 @@ int main(int argc, char *argv[]){
 			token = strtok(NULL, ",");
 			strcpy(time,token);
 			sscanf(time, "%d:%d", &hour, &min);
-			//printf("%d,%d\n", hour, min);
 			token = strtok(NULL, ",");
 			strcpy(location,token);
 			if (strrchr(action, 'C')){
@@ -68,13 +67,11 @@ int main(int argc, char *argv[]){
 					if (difftime(mktime(&events[count].time), mktime(&events[i].time)) == 0 && i != count){
 						strftime(time, SIZE, "%m/%d/%g,%H:%M", &events[count].time);
 						printf("%s,%s\n", time, events[i].location);
-						//printf("equal %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
 						count ++;
 						break;
 					}
 					else if (difftime(mktime(&events[count].time), mktime(&events[i].time)) < 0|count == 0){
 						strftime(time, SIZE, "%m/%d/%g,%H:%M", &events[count].time);
-						//printf("less than %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
 						printf("%s,%s\n", time, events[count].location);
 
 						break;
@@ -82,13 +79,10 @@ int main(int argc, char *argv[]){
 					else if (difftime(mktime(&events[count].time), mktime(&events[i].time)) > 0){
 
 						break;
-						//printf("greater than %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
-						//strftime(time, SIZE, "%m/%d/%g,%H:%M", &events[i].time);
-						//printf("%s,%s\n", time, events[i].location);
+
 					}
 
 				}
-				//printf("%s,%i,%s", events[count].date, events[count].time, events[count].location);
 				count ++;
 			}
 			else if (strrchr(action, 'X')){
@@ -117,20 +111,16 @@ int main(int argc, char *argv[]){
 					if (difftime(mktime(&events[count].time), mktime(&events[i].time)) == 0 && i != count){
 						strftime(time, SIZE, "%m/%d/%g", &events[count].time);
 						printf("%s,--:--,NA\n",  time);
-						//printf("equal %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
 						break;
 					}
 					else if (difftime(mktime(&events[count].time), mktime(&events[i].time)) < 0|count == 0){
 						strftime(time, SIZE, "%m/%d/%g", &events[count].time);
-						//printf("less than %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
 						printf("%s,--:--,NA%i\n",  time,count);
 						break;
 					}
 					else if (difftime(mktime(&events[count].time), mktime(&events[i].time)) > 0){
 						break;
-						//printf("greater than %f", difftime(mktime(&events[count].time), mktime(&events[i].time)));
-						//strftime(time, SIZE, "%m/%d/%g,%H:%M", &events[i].time);
-						//printf("%s,%s\n", time, events[i].location);
+]
 					}
 
 				}
