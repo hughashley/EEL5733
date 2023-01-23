@@ -23,6 +23,7 @@ struct event {
 
 int main(int argc, char *argv[]){
 
+	//declare variables
 	struct event events[30];
 	struct event earliest_event;
 	struct event earliest_event1;
@@ -45,15 +46,15 @@ int main(int argc, char *argv[]){
 	ssize_t line_in_size;
 
 
-
+	//get line and store size
 	line_in_size = getline(&buf, &bufsz, stdin);
 
-
+	//check for EOF condition
 	while (line_in_size >= 0){
 
 
 
-
+			//tokenize line from stdin and store in corresponding variables
 			token = strtok(buf, ",");
 			strcpy(action, token);
 			token = strtok(NULL, ",");
@@ -72,8 +73,9 @@ int main(int argc, char *argv[]){
 
 
 
-
+			//check for calendar action
 			if (strrchr(action, 'C')){
+				//populate event struct with incoming event
 				strcpy(events[count].title, title);
 				events[count].time.tm_hour = hour;
 				events[count].time.tm_min = min;
@@ -83,11 +85,13 @@ int main(int argc, char *argv[]){
 				events[count].time.tm_sec = 0;
 				events[count].time.tm_isdst = 0;
 				strcpy(events[count].location, location);
-				//loop to determine
+				//loop to determine which event to print
 				for (int i = 0; i <= count; i++){
+					//create string representing date of event
 					strftime(time, SIZE, "%m/%d", &events[count].time);
 					strftime(time1, SIZE, "%m/%d", &events[i].time);
 					//printf("date 1: %s date 2: %s, i: %i, count: %i \n", time, time1, i, count);
+					//conditions for printing event based on events already created and time of new event
 					if (count == 0){
 						strftime(time, SIZE, "%m/%d/%Y,%H:%M", &events[count].time);
 						printf("%s,%s", time, events[count].location);
@@ -113,8 +117,10 @@ int main(int argc, char *argv[]){
 
 					}
 				}
+				//increase count of stored events
 				count ++;
 			}
+			//change event actions
 			else if (strrchr(action, 'X')){
 				for (int i = 0; i <= count; i++){
 				if (strcmp(events[i].title, title) == 0){
@@ -128,6 +134,7 @@ int main(int argc, char *argv[]){
 				}
 				}
 			}
+			//delete event actions
 			else if (strrchr(action, 'D')){
 				working_tm.tm_hour = hour;
 				working_tm.tm_min = min;
@@ -206,11 +213,12 @@ int main(int argc, char *argv[]){
 
 
 
-
+		//get new line
 		line_in_size = getline(&buf, &bufsz, stdin);
 
 	}
-
+	//release variables
+	printf("\n");
 	free(buf);
 	free(action);
 	free(title);
