@@ -218,7 +218,7 @@ int main(int argc, char *argv[]){
 
 	}
 	//release variables
-	printf("\n");
+	//printf("\n");
 	free(buf);
 	free(action);
 	free(title);
