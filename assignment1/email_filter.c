@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 			//printf("%s\n", buf);
 			token = strchr(buf, ':');
 			//check for white space between "subject:" and action flag
-			if (isspace(token[1]) >= 1){
+			if (isspace(token[1]) <= 1){
 				line_in_size = getline(&buf, &bufsz, stdin);
 				continue;
 			}
