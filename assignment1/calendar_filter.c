@@ -66,6 +66,13 @@ int main(int argc, char *argv[]){
 			sscanf(time, "%d:%d", &hour, &min);
 			token = strtok(NULL, ",");
 			strcpy(location,token);
+
+
+
+
+
+
+
 			if (strrchr(action, 'C')){
 				strcpy(events[count].title, title);
 				events[count].time.tm_hour = hour;
@@ -76,6 +83,7 @@ int main(int argc, char *argv[]){
 				events[count].time.tm_sec = 0;
 				events[count].time.tm_isdst = 0;
 				strcpy(events[count].location, location);
+				//loop to determine
 				for (int i = 0; i <= count; i++){
 					strftime(time, SIZE, "%m/%d", &events[count].time);
 					strftime(time1, SIZE, "%m/%d", &events[i].time);
@@ -87,7 +95,7 @@ int main(int argc, char *argv[]){
 						break;
 
 					}
-					else if (strcmp(time, time1) != 0 && i > 0 || count == i ){
+					else if (strcmp(time, time1) != 0 && i > 0 || count == i || strcmp(earliest_event.location , "NA\n")==0 ){
 						strftime(time, SIZE, "%m/%d/%Y,%H:%M", &events[count].time);
 						printf("%s,%s", time, events[count].location);
 
@@ -151,17 +159,23 @@ int main(int argc, char *argv[]){
 					strftime(time1, SIZE, "%m/%d", &events[i].time);
 					//printf("date 1: %s date 2: %s\n", time, time1);
 					//check for date match, then check to see if the new event or the loop event is earlier
-					if (strcmp(time, time1) == 0 && difftime(mktime(&earliest_event.time), mktime(&events[i].time)) < 0 && strcmp(events[i].location, "NA\n") != 0){
+					if(strcmp(time, time1) == 0 && difftime(mktime(&earliest_event.time), mktime(&events[i].time)) == 0 && earliest_event1.time.tm_year == 0){
+						earliest_event = events[i];
+						//strftime(time, SIZE, "%m/%d/%Y,%H:%M", &earliest_event.time);
+						//printf("Earliest Event: %s,%s", time, earliest_event.location);
+						break;
+					}
+					else if (strcmp(time, time1) == 0 && difftime(mktime(&earliest_event.time), mktime(&events[i].time)) < 0 && strcmp(events[i].location, "NA\n") != 0){
 					//store earlier event
 						earliest_event = events[i];
-						strftime(time, SIZE, "%m/%d/%Y,%H:%M", &earliest_event.time);
+						//strftime(time, SIZE, "%m/%d/%Y,%H:%M", &earliest_event.time);
 						//printf("Earliest Event: %s,%s", time, earliest_event.location);
 						break;
 
 					}
 					else if (strcmp(time, time1) == 0 && difftime(mktime(&earliest_event.time), mktime(&events[i].time)) < 0 && strcmp(events[i].location, "NA\n") == 0){
 						earliest_event = events[i];
-						strftime(time, SIZE, "%m/%d/%Y,%H:%M", &earliest_event.time);
+						//strftime(time, SIZE, "%m/%d/%Y,%H:%M", &earliest_event.time);
 						//printf("Earliest Event: %s,%s", time, earliest_event.location);
 						break;
 					}
