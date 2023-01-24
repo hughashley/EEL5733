@@ -32,8 +32,9 @@ int main(int argc, char *argv[]){
 			close(fd[0]);
 			//replace stdout with write side of pipe using dup2.  saves one line of code over closing stdout and using dup.
 			dup2(fd[1], 1);
+
 			close (fd[1]);
-			execlp("./email_filter", "email_filter",(char*)NULL);
+			execl("./email_filter", NULL);
 
 			_exit(EXIT_SUCCESS);
 		}
@@ -48,7 +49,7 @@ int main(int argc, char *argv[]){
 			//replace stdin with read side of pipe using dup2.  saves one line of code over closing stdin and using dup.
 			dup2(fd[0], 0);
 			close (fd[0]);
-			execlp("./calendar_filter", "calendar_filter",(char*)NULL);
+			execl("./calendar_filter", NULL);
 
 			wait(NULL);
 
