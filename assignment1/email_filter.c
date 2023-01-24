@@ -95,7 +95,8 @@ int main(int argc, char *argv[]){
 			strncat(location, wsbuf, 10-strlen(location));
 			};
 			//print formatted calendar event to stdout
-			printf("\r%s,%s,%s,%s,%s\n", action, title, date, time, location);
+			printf("\r");
+			printf("%s,%s,%s,%s,%s", action, title, date, time, location);
 
 
 			//get next line and size of line
