@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 				continue;
 			};
 			//get next token
-			token = strtok(NULL, ",");
+			token = strtok(NULL, ", ");
 			//filter bad inputs
 			if(token==NULL){
 				line_in_size = getline(&buf, &bufsz, stdin);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 			//copy current token to title variable
 			strcpy(title, token);
 			//get next token
-			token = strtok(NULL, ",");
+			token = strtok(NULL, ", ");
 			//filter bad inputs
 			if(token==NULL){
 				line_in_size = getline(&buf, &bufsz, stdin);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]){
 			//copy current token to date variable
 			strcpy(date,token);
 			//get next token
-			token = strtok(NULL, ",");
+			token = strtok(NULL, ", ");
 			//filter bad inputs
 			if(token==NULL){
 				//get next line
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
 			//copy current token to time variable
 			strcpy(time,token);
 			//get next token
-			token = strtok(NULL, ",");
+			token = strtok(NULL, ", ");
 			if(token==NULL){
 				//get next line
 				line_in_size = getline(&buf, &bufsz, stdin);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]){
 			strncat(location, wsbuf, 10-strlen(location));
 			};
 			//print formatted calendar event to stdout
-			printf("%s,%s,%s,%s,%s", action, title, date, time, location);
+			printf("\r%s,%s,%s,%s,%s", action, title, date, time, location);
 
 
 			//get next line and size of line
