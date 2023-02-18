@@ -9,6 +9,9 @@
 
 #define SIZE 1024
 int bufsize = 0;
+static char *strbuff[SIZE];
+static char *bufbuff[SIZE];
+
 static sem_t *sem;
 
 
@@ -33,10 +36,9 @@ static void *email_filter(void *voidData){
 	size_t bufsz;
 	ssize_t line_in_size;
 
-
-while (sem_getvalue(sem, &value)<10){
-
-
+	printf("email filter pre while\n");
+while (sem_getvalue(sem, &value)){
+	printf("email filter while start\n");
 
 
 
@@ -116,14 +118,13 @@ while (sem_getvalue(sem, &value)<10){
 				};
 				//print formatted calendar event to stdout
 				printf("\r");
-				printf("%s,%s,%s,%s,%s", action, title, date, time, location);
-
-
+				snprintf(strbuff[value] ,sizeof strbuff[value] ,"%s,%s,%s,%s,%s", action, title, date, time, location);
+				printf("%s", strbuff[value]);
 				//get next line and size of line
 
 			line_in_size = getline(&buf, &bufsz, stdin);
 		};
-
+		printf("increment semaphore\n");
 		sem_post(sem);
 
 
@@ -151,13 +152,16 @@ static void *calendar_filter(void *voidData){
 	int hour = 00;
 	int min = 00;
 	int count = 0;
+	int value;
 	size_t bufsz;
 	ssize_t line_in_size;
+	printf("while loop calendar filter\n");
+while(sem_getvalue(sem, &value)){
 
-while(1){
-	sem_wait(sem);
+
 		//get line and store size
-		line_in_size = getline(&buf, &bufsz, stdin);
+		sem_getvalue(sem, &value);
+		line_in_size = sizeof strcpy(buf, strbuff[value]);
 
 		//check for EOF condition
 		while (line_in_size >= 0){
@@ -322,7 +326,8 @@ while(1){
 
 
 
-
+				sem_trywait(sem);
+				printf("decrement semaphore\n");
 			//get new line
 			line_in_size = getline(&buf, &bufsz, stdin);
 
@@ -337,13 +342,15 @@ int main(int argc, char *argv[]){
 
 
 pthread_t t1, t2;
+bufsize = atoi(argv[1]);
 sem = sem_open(argv[1], 0);
-char *buffer[bufsize];
 
 
+printf("main thread\n");
 pthread_create(&t1, NULL, email_filter, NULL);
+printf("t1 started\n");
 pthread_create(&t2, NULL, calendar_filter, NULL);
-
+printf("t2 started\n");
 
 pthread_join(t1, NULL);
 pthread_join(t2, NULL);
