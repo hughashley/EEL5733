@@ -13,6 +13,6 @@
 all:	location_updater
 
 location_updater: location_updater.c
-	gcc -o location_updater location_updater.c
+	gcc -o  location_updater location_updater.c -lpthread 
 clean:
 	rm -rf location_updater
