@@ -9,7 +9,7 @@
 
 #define SIZE 1024
 int bufsize = 0;
-sem_t sem;
+static sem_t *sem;
 
 
 struct event {
@@ -34,7 +34,7 @@ static void *email_filter(void *voidData){
 	ssize_t line_in_size;
 
 
-while (sem_getvalue(&sem, &value)<10){
+while (sem_getvalue(sem, &value)<10){
 
 
 
@@ -128,6 +128,7 @@ while (sem_getvalue(&sem, &value)<10){
 
 
 }
+		return NULL;
 }
 static void *calendar_filter(void *voidData){
 
@@ -154,7 +155,7 @@ static void *calendar_filter(void *voidData){
 	ssize_t line_in_size;
 
 while(1){
-	sem_wait(&sem);
+	sem_wait(sem);
 		//get line and store size
 		line_in_size = getline(&buf, &bufsz, stdin);
 
@@ -328,16 +329,15 @@ while(1){
 		}
 
 }
-
+		return NULL;
 }
 
 
 int main(int argc, char *argv[]){
 
-bufsize = atoi(argv[1]);
 
 pthread_t t1, t2;
-sem = sem_open(bufsize, 0);
+sem = sem_open(argv[1], 0);
 char *buffer[bufsize];
 
 
