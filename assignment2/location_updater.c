@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <ctype.h>
 #include <semaphore.h>
@@ -10,6 +11,7 @@
 #define SIZE 1024
 int bufsize = 0;
 int bufval = 0;
+int thread1 = 0;
 char strbuff[SIZE][SIZE];
 
 
@@ -45,6 +47,7 @@ while (line_in_size >= 0){
 	//printf("mutex locked by email\n");
 
 	while(bufval > 0)
+
 		pthread_cond_wait(&cond, &mutex);
 
 
@@ -60,6 +63,7 @@ for (int i = 0; i < bufsize; i++){
 					bufsize = bufval;
 					pthread_cond_broadcast(&cond);
 					pthread_mutex_unlock(&mutex);
+					thread1 = 0;
 					return NULL;
 				}
 				//printf("%s\n", buf);
@@ -197,6 +201,9 @@ value = bufval;
 
 while(bufval < bufsize){
 	//printf("waiting for buffer to fill\n");
+	sleep(1);
+	if (thread1 == 0)
+		return NULL;
 	pthread_cond_wait(&cond, &mutex);
 }
 
@@ -413,6 +420,7 @@ bufsize = atoi(argv[1]);
 
 //printf("main thread\n");
 pthread_create(&t1, NULL, email_filter, NULL);
+thread1 = 1;
 //printf("t1 started\n");
 pthread_create(&t2, NULL, calendar_filter, NULL);
 //printf("t2 started\n");
