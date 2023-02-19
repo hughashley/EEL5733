@@ -9,10 +9,12 @@
 
 #define SIZE 1024
 int bufsize = 0;
-static char *strbuff[SIZE];
-static char *bufbuff[SIZE];
+char strbuff[SIZE][SIZE];
 
-static sem_t *sem;
+
+static sem_t *sem1;
+static sem_t *sem2;
+static sem_t *sem3;
 
 
 struct event {
@@ -32,28 +34,38 @@ static void *email_filter(void *voidData){
 	char *date = malloc(SIZE);
 	char *time = malloc(SIZE);
 	char *location = malloc(SIZE);
-	static char *wsbuf = "        ";
+	static char *wsbuf = "          ";
 	size_t bufsz;
 	ssize_t line_in_size;
 
-	printf("email filter pre while\n");
-while (sem_getvalue(sem, &value)){
-	printf("email filter while start\n");
+line_in_size = getline(&buf, &bufsz, stdin);
+while (line_in_size >= 0){
+	if(sem_trywait(sem3) == -1)
+		printf("e wait sem3\n");
+		break;
+	if(sem_trywait(sem1) == -1)
+		printf("e wait sem1\n");
+		break;
+
+	printf("semaphore decremented by email\n");
 
 
 
+	//check for EOF condition
 
+for (int i = 0; i < bufsize; i++){
+
+	printf("e1\n");
 		//get line from stdin, get length and store in buffer
-		line_in_size = getline(&buf, &bufsz, stdin);
 
-		//check for EOF condition
-		while (line_in_size >= 0){
+
 
 				//printf("%s\n", buf);
 				token = strchr(buf, ':');
 				//check for white space between "subject:" and action flag
 				if (isspace(token[1]) == 0){
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				}
 
@@ -68,6 +80,7 @@ while (sem_getvalue(sem, &value)){
 				//make sure subject is a calendar action and not something arbitrary
 				if(strlen(action)>1){
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				};
 				//get next token
@@ -75,6 +88,7 @@ while (sem_getvalue(sem, &value)){
 				//filter bad inputs
 				if(token==NULL){
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				};
 				//copy current token to title variable
@@ -84,6 +98,7 @@ while (sem_getvalue(sem, &value)){
 				//filter bad inputs
 				if(token==NULL){
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				};
 				//copy current token to date variable
@@ -94,6 +109,7 @@ while (sem_getvalue(sem, &value)){
 				if(token==NULL){
 					//get next line
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				};
 				//copy current token to time variable
@@ -103,6 +119,7 @@ while (sem_getvalue(sem, &value)){
 				if(token==NULL){
 					//get next line
 					line_in_size = getline(&buf, &bufsz, stdin);
+					snprintf(strbuff[i] ,SIZE ,"\r");
 					continue;
 				};
 				//copy current token to location variable
@@ -116,20 +133,31 @@ while (sem_getvalue(sem, &value)){
 				if (strlen(location)<10){
 				strncat(location, wsbuf, 10-strlen(location));
 				};
+
+
 				//print formatted calendar event to stdout
-				printf("\r");
-				snprintf(strbuff[value] ,sizeof strbuff[value] ,"%s,%s,%s,%s,%s", action, title, date, time, location);
-				printf("%s", strbuff[value]);
+
+				snprintf(strbuff[i] ,SIZE ,"%s,%s,%s,%s,%s", action, title, date, time, location);
+				printf("e2\n");
+				printf("%s", strbuff[i]);
 				//get next line and size of line
 
 			line_in_size = getline(&buf, &bufsz, stdin);
-		};
-		printf("increment semaphore\n");
-		sem_post(sem);
+		}
+
+printf("increment semaphore by email\n");
+if(sem_post(sem2) == -1)
+	printf("e post sem2\n");
+if(sem_post(sem3) == -1)
+	printf("e post sem3\n");
+if (line_in_size == -1)
+	return NULL;
+
+
 
 
 }
-		return NULL;
+
 }
 static void *calendar_filter(void *voidData){
 
@@ -155,13 +183,22 @@ static void *calendar_filter(void *voidData){
 	int value;
 	size_t bufsz;
 	ssize_t line_in_size;
-	printf("while loop calendar filter\n");
-while(sem_getvalue(sem, &value)){
+while(1){
 
+	if(sem_trywait(sem3) == -1)
+		printf("c wait sem3\n");
+		break;
 
+	if(sem_trywait(sem2) == -1)
+		printf("c wait sem2\n");
+		break;
+
+for (int i = 0; i <= bufsize; i++){
+	printf("c1\n");
 		//get line and store size
-		sem_getvalue(sem, &value);
-		line_in_size = sizeof strcpy(buf, strbuff[value]);
+
+
+		line_in_size = sizeof (strcpy(buf, strbuff[i]));
 
 		//check for EOF condition
 		while (line_in_size >= 0){
@@ -233,6 +270,7 @@ while(sem_getvalue(sem, &value)){
 					}
 					//increase count of stored events
 					count ++;
+
 				}
 				//change event actions
 				else if (strrchr(action, 'X')){
@@ -324,26 +362,39 @@ while(sem_getvalue(sem, &value)){
 
 
 
+				printf("c2\n");
 
 
-				sem_trywait(sem);
 				printf("decrement semaphore\n");
 			//get new line
 			line_in_size = getline(&buf, &bufsz, stdin);
 
 		}
+		if(sem_post(sem1) == -1)
+			printf("c post sem1\n");
+		if(sem_post(sem3) == -1)
+			printf("c post sem3\n");
+		if (line_in_size == -1)
+				return NULL;
+}
 
 }
-		return NULL;
 }
-
 
 int main(int argc, char *argv[]){
 
 
 pthread_t t1, t2;
 bufsize = atoi(argv[1]);
-sem = sem_open(argv[1], 0);
+if(sem_init(sem1, 0, 0) == -1)
+		printf("sem1 init error");
+if(sem_init(sem2, 0, &bufsize) == -1)
+		printf("sem2 init error");
+if(sem_init(sem3, 0, 0) == -1)
+		printf("sem3 init error");
+
+
+
 
 
 printf("main thread\n");
