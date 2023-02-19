@@ -52,17 +52,17 @@ while (line_in_size >= 0){
 
 for (int i = 0; i < bufsize; i++){
 	bufval ++;
-	printf("e1, bufval:%i\n", bufval);
+	//printf("e1, bufval:%i\n", bufval);
 		//get line from stdin, get length and store in buffer
 
 
 				if (line_in_size == -1){
-					bufsize = bufval-1;
+					bufsize = bufval;
 					pthread_cond_broadcast(&cond);
 					pthread_mutex_unlock(&mutex);
 					return NULL;
 				}
-				printf("%s\n", buf);
+				//printf("%s\n", buf);
 				token = strchr(buf, ':');
 				//check for white space between "subject:" and action flag
 				if (isspace(token[1]) == 0){
@@ -147,7 +147,7 @@ for (int i = 0; i < bufsize; i++){
 				//print formatted calendar event to stdout
 
 				snprintf(strbuff[i] ,SIZE ,"%s,%s,%s,%s,%s", action, title, date, time, location);
-				printf("e2\n");
+				//printf("e2\n");
 				//printf("%s", strbuff[i]);
 				//get next line and size of line
 
@@ -217,7 +217,7 @@ bufval --;
 
 
 
-		printf("c1, bufval:%i\n", bufval);
+		//printf("c1, bufval:%i\n", bufval);
 
 				//tokenize line from stdin and store in corresponding variables
 				token = strtok(buf, ",");
@@ -378,7 +378,7 @@ bufval --;
 
 
 
-				printf("c2\n");
+				//printf("c2\n");
 
 
 
@@ -411,11 +411,11 @@ bufsize = atoi(argv[1]);
 
 
 
-printf("main thread\n");
+//printf("main thread\n");
 pthread_create(&t1, NULL, email_filter, NULL);
-printf("t1 started\n");
+//printf("t1 started\n");
 pthread_create(&t2, NULL, calendar_filter, NULL);
-printf("t2 started\n");
+//printf("t2 started\n");
 
 pthread_join(t1, NULL);
 pthread_join(t2, NULL);
