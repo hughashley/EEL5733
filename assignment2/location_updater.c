@@ -42,7 +42,7 @@ line_in_size = getline(&buf, &bufsz, stdin);
 while (line_in_size >= 0){
 
 	pthread_mutex_lock(&mutex);
-	printf("mutex locked by email\n");
+	//printf("mutex locked by email\n");
 
 	while(bufval > 0)
 		pthread_cond_wait(&cond, &mutex);
@@ -56,12 +56,18 @@ for (int i = 0; i < bufsize; i++){
 		//get line from stdin, get length and store in buffer
 
 
-
+				if (line_in_size == -1){
+					bufsize = bufval-1;
+					pthread_cond_broadcast(&cond);
+					pthread_mutex_unlock(&mutex);
+					return NULL;
+				}
 				printf("%s\n", buf);
 				token = strchr(buf, ':');
 				//check for white space between "subject:" and action flag
 				if (isspace(token[1]) == 0){
 					line_in_size = getline(&buf, &bufsz, stdin);
+
 					//snprintf(strbuff[i] ,SIZE ,"");
 
 					continue;
@@ -148,7 +154,7 @@ for (int i = 0; i < bufsize; i++){
 			line_in_size = getline(&buf, &bufsz, stdin);
 		}
 
-printf("mutex unlocked by email\n");
+//printf("mutex unlocked by email\n");
 pthread_cond_broadcast(&cond);
 pthread_mutex_unlock(&mutex);
 
@@ -186,22 +192,22 @@ static void *calendar_filter(void *voidData){
 while(1){
 
 pthread_mutex_lock(&mutex);
-printf("mutex locked by calendar\n");
-
+//printf("mutex locked by calendar\n");
+value = bufval;
 
 while(bufval < bufsize){
 	//printf("waiting for buffer to fill\n");
 	pthread_cond_wait(&cond, &mutex);
 }
-value = bufval;
+
 for (int i = 0; i<value;i++){
 bufval --;
 		//get line and store size
 
 
 		//printf("checking buffer\n");
-		printf("%s\n", strbuff[i]);
-		if (strlen(strbuff[i]) > 10)
+		//printf("%s\n", strbuff[i]);
+		if (strlen(strbuff[i]) > 5)
 			strcpy(buf, strbuff[i]);
 		else continue;
 		//printf("gottem\n");
@@ -385,7 +391,7 @@ bufval --;
 
 		}
 		pthread_cond_broadcast(&cond);
-		printf("unlocked by calendar\n");
+		//printf("unlocked by calendar\n");
 		pthread_mutex_unlock(&mutex);
 
 
