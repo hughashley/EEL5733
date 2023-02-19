@@ -60,7 +60,7 @@ for (int i = 0; i < bufsize; i++){
 
 
 				if (line_in_size == -1){
-					bufsize = bufval;
+					bufsize = bufval-1;
 					pthread_cond_broadcast(&cond);
 					pthread_mutex_unlock(&mutex);
 					thread1 = 0;
