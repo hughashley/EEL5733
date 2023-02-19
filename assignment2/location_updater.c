@@ -9,13 +9,12 @@
 
 #define SIZE 1024
 int bufsize = 0;
+int bufval = 0;
 char strbuff[SIZE][SIZE];
 
 
-static sem_t *sem1;
-static sem_t *sem2;
-static sem_t *sem3;
-
+pthread_mutex_t mutex;
+pthread_cond_t cond;
 
 struct event {
 	char date[SIZE];
@@ -39,33 +38,32 @@ static void *email_filter(void *voidData){
 	ssize_t line_in_size;
 
 line_in_size = getline(&buf, &bufsz, stdin);
+
 while (line_in_size >= 0){
-	if(sem_trywait(sem3) == -1)
-		printf("e wait sem3\n");
-		break;
-	if(sem_trywait(sem1) == -1)
-		printf("e wait sem1\n");
-		break;
 
-	printf("semaphore decremented by email\n");
+	pthread_mutex_lock(&mutex);
+	printf("mutex locked by email\n");
 
+	while(bufval > 0)
+		pthread_cond_wait(&cond, &mutex);
 
 
 	//check for EOF condition
 
 for (int i = 0; i < bufsize; i++){
-
-	printf("e1\n");
+	bufval ++;
+	printf("e1, bufval:%i\n", bufval);
 		//get line from stdin, get length and store in buffer
 
 
 
-				//printf("%s\n", buf);
+				printf("%s\n", buf);
 				token = strchr(buf, ':');
 				//check for white space between "subject:" and action flag
 				if (isspace(token[1]) == 0){
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"");
+
 					continue;
 				}
 
@@ -80,7 +78,8 @@ for (int i = 0; i < bufsize; i++){
 				//make sure subject is a calendar action and not something arbitrary
 				if(strlen(action)>1){
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"\r");
+
 					continue;
 				};
 				//get next token
@@ -88,7 +87,8 @@ for (int i = 0; i < bufsize; i++){
 				//filter bad inputs
 				if(token==NULL){
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"\r");
+
 					continue;
 				};
 				//copy current token to title variable
@@ -98,7 +98,8 @@ for (int i = 0; i < bufsize; i++){
 				//filter bad inputs
 				if(token==NULL){
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"\r");
+
 					continue;
 				};
 				//copy current token to date variable
@@ -109,7 +110,8 @@ for (int i = 0; i < bufsize; i++){
 				if(token==NULL){
 					//get next line
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"\r");
+
 					continue;
 				};
 				//copy current token to time variable
@@ -119,7 +121,8 @@ for (int i = 0; i < bufsize; i++){
 				if(token==NULL){
 					//get next line
 					line_in_size = getline(&buf, &bufsz, stdin);
-					snprintf(strbuff[i] ,SIZE ,"\r");
+					//snprintf(strbuff[i] ,SIZE ,"\r");
+
 					continue;
 				};
 				//copy current token to location variable
@@ -139,25 +142,22 @@ for (int i = 0; i < bufsize; i++){
 
 				snprintf(strbuff[i] ,SIZE ,"%s,%s,%s,%s,%s", action, title, date, time, location);
 				printf("e2\n");
-				printf("%s", strbuff[i]);
+				//printf("%s", strbuff[i]);
 				//get next line and size of line
 
 			line_in_size = getline(&buf, &bufsz, stdin);
 		}
 
-printf("increment semaphore by email\n");
-if(sem_post(sem2) == -1)
-	printf("e post sem2\n");
-if(sem_post(sem3) == -1)
-	printf("e post sem3\n");
-if (line_in_size == -1)
-	return NULL;
+printf("mutex unlocked by email\n");
+pthread_cond_broadcast(&cond);
+pthread_mutex_unlock(&mutex);
+
 
 
 
 
 }
-
+return NULL;
 }
 static void *calendar_filter(void *voidData){
 
@@ -182,28 +182,36 @@ static void *calendar_filter(void *voidData){
 	int count = 0;
 	int value;
 	size_t bufsz;
-	ssize_t line_in_size;
+	int line_in_size;
 while(1){
 
-	if(sem_trywait(sem3) == -1)
-		printf("c wait sem3\n");
-		break;
+pthread_mutex_lock(&mutex);
+printf("mutex locked by calendar\n");
 
-	if(sem_trywait(sem2) == -1)
-		printf("c wait sem2\n");
-		break;
 
-for (int i = 0; i <= bufsize; i++){
-	printf("c1\n");
+while(bufval < bufsize){
+	//printf("waiting for buffer to fill\n");
+	pthread_cond_wait(&cond, &mutex);
+}
+value = bufval;
+for (int i = 0; i<value;i++){
+bufval --;
 		//get line and store size
 
 
-		line_in_size = sizeof (strcpy(buf, strbuff[i]));
+		//printf("checking buffer\n");
+		printf("%s\n", strbuff[i]);
+		if (strlen(strbuff[i]) > 10)
+			strcpy(buf, strbuff[i]);
+		else continue;
+		//printf("gottem\n");
 
+		//printf("%i\n", line_in_size);
 		//check for EOF condition
-		while (line_in_size >= 0){
 
 
+
+		printf("c1, bufval:%i\n", bufval);
 
 				//tokenize line from stdin and store in corresponding variables
 				token = strtok(buf, ",");
@@ -281,6 +289,7 @@ for (int i = 0; i <= bufsize; i++){
 						events[i].time.tm_hour = hour;
 						events[i].time.tm_min = min;
 						strftime(time, SIZE, "%m/%d/%Y,%H:%M", &events[i].time);
+
 						printf("%s,%s", time, events[i].location);
 
 					}
@@ -306,6 +315,7 @@ for (int i = 0; i <= bufsize; i++){
 							//insert flag to show event is deleted
 							strcpy(events[i].location, "NA\n");
 							//make current event the earliest event
+
 							earliest_event.time = working_tm;
 
 						}
@@ -357,7 +367,7 @@ for (int i = 0; i <= bufsize; i++){
 
 						}
 
-							}
+
 
 
 
@@ -365,20 +375,23 @@ for (int i = 0; i <= bufsize; i++){
 				printf("c2\n");
 
 
-				printf("decrement semaphore\n");
+
+
+
+				}
+
 			//get new line
-			line_in_size = getline(&buf, &bufsz, stdin);
+
 
 		}
-		if(sem_post(sem1) == -1)
-			printf("c post sem1\n");
-		if(sem_post(sem3) == -1)
-			printf("c post sem3\n");
-		if (line_in_size == -1)
-				return NULL;
-}
+		pthread_cond_broadcast(&cond);
+		printf("unlocked by calendar\n");
+		pthread_mutex_unlock(&mutex);
+
+
 
 }
+return NULL;
 }
 
 int main(int argc, char *argv[]){
@@ -386,12 +399,7 @@ int main(int argc, char *argv[]){
 
 pthread_t t1, t2;
 bufsize = atoi(argv[1]);
-if(sem_init(sem1, 0, 0) == -1)
-		printf("sem1 init error");
-if(sem_init(sem2, 0, &bufsize) == -1)
-		printf("sem2 init error");
-if(sem_init(sem3, 0, 0) == -1)
-		printf("sem3 init error");
+
 
 
 
