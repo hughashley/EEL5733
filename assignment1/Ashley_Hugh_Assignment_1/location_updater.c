@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
 
 		if(pid==0){
 
-			//child process to call calendar filter receiving input piped from email filter
+			//child process to call email filter receiving input piped from email filter
 
 			//close read side of file descriptor
 			close(fd[0]);
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
 
 		//else if (pid > 0){
 
-			//parent process to call email filter to pipe stdin to calendar filter
+			//parent process to call calendar filter to pipe stdin to calendar filter
 
 
 			//close write side of file descriptor

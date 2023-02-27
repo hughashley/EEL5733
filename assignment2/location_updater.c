@@ -5,8 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <semaphore.h>
-#include "email_filter.h"
-#include "calendar_filter.h"
+
 
 #define SIZE 1024
 int bufsize = 0;
