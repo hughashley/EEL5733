@@ -9,6 +9,9 @@
 
 #define SIZE 1024
 struct transfer_data {
+	pthread_mutex_t ready_mutex;
+	pthread_cond_t ready_cond;
+	pthread_cond_t post_cond;
 	int posted;
 	int ready;
 	int accountFrom;
@@ -24,9 +27,7 @@ int active_thread_from = 0;
 int active_thread_to = 0;
 int max_threads;
 int active_thread = 0;
-int ready[SIZE];
-pthread_mutex_t ready_mutex;
-pthread_cond_t ready_cond;
+
 
 pthread_mutex_t account1_mutex;
 pthread_cond_t account1_cond;
@@ -44,19 +45,20 @@ void *eft(void *thread_num){
 	time_t seconds;
 	struct timespec tiem = {0};
 
-	ready[thread_no] = 1;
+
 	//printf("%i\n", thread_no);
 	thread_manager[thread_no].ready = 1;
 	while (1){
 
-
+	pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
 	while(thread_manager[thread_no].posted == 0){
+		pthread_cond_wait(&thread_manager[thread_no].post_cond, &thread_manager[thread_no].ready_mutex);
 		if (thread_manager[thread_no].ready == -1)
 			return NULL;
 		}
 
 	thread_manager[thread_no].ready = 0;
-
+	pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
 
 	pthread_mutex_lock(&account1_mutex);
 	while(active_thread_from != 0)
@@ -84,15 +86,21 @@ void *eft(void *thread_num){
 	accounts[thread_manager[thread_no].accountTo].balance = accounts[thread_manager[thread_no].accountTo].balance + thread_manager[thread_no].balance;
 	//printf("%d deposited in account %d by thread %d\n", thread_manager[thread_no].balance, thread_manager[thread_no].accountTo, thread_no);
 	//printf("to unlocked\n");
+
+	active_thread_to--;
+	pthread_cond_signal(&account2_cond);
+
+	pthread_mutex_unlock(&account2_mutex);
+
+
+	pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
 	thread_manager[thread_no].accountFrom = 0;
 	thread_manager[thread_no].accountTo = 0;
 	thread_manager[thread_no].balance = 0;
 	thread_manager[thread_no].posted = 0;
 	thread_manager[thread_no].ready = 1;
-	active_thread_to--;
-	pthread_cond_signal(&account2_cond);
-
-	pthread_mutex_unlock(&account2_mutex);
+	pthread_cond_signal(&thread_manager[thread_no].ready_cond);
+	pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
 
 
 	}
@@ -121,9 +129,7 @@ int main(int argc, char *argv[]){
 
 
 	pthread_t thread[max_threads];
-	pthread_mutex_init(&account1_mutex, NULL);
-	pthread_mutex_init(&account2_mutex, NULL);
-	pthread_mutex_init(&ready_mutex, NULL);
+
 	size_t bufsz;
 	ssize_t in_length;
 
@@ -152,6 +158,11 @@ int main(int argc, char *argv[]){
 		if (strcmp(token, "Transfer") == 0){
 			//printf("starting transfer\n");
 			//pause if at active thread limit
+
+			from = atoi(strtok(NULL, " "));
+			to = atoi(strtok(NULL, " "));
+			bal = atoi(strtok(NULL, ""));
+
 			thread_assigned = 0;
 			while(thread_assigned == 0){
 
@@ -160,16 +171,20 @@ int main(int argc, char *argv[]){
 					continue;
 				}
 				else{
-				from = atoi(strtok(NULL, " "));
-				to = atoi(strtok(NULL, " "));
-				bal = atoi(strtok(NULL, ""));
+				pthread_mutex_lock(&thread_manager[i].ready_mutex);
 				//printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
+				while (thread_manager[i].ready != 1)
+					pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
+
 				thread_manager[i].accountFrom = from;
 				thread_manager[i].accountTo = to;
 				thread_manager[i].balance = bal;
 				thread_manager[i].posted = 1;
-				thread_assigned = 1;
 
+				pthread_cond_signal(&thread_manager[i].post_cond);
+
+				thread_assigned = 1;
+				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				break;
 				}
 
