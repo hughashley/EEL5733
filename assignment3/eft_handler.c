@@ -47,7 +47,7 @@ void *eft(void *thread_num){
 
 
 	//printf("%i\n", thread_no);
-	thread_manager[thread_no].ready = 1;
+
 	while (1){
 
 	pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
@@ -136,6 +136,7 @@ int main(int argc, char *argv[]){
 
 	for (int i = 0;i< max_threads; i++){
 		thread_number[i]=i;
+		thread_manager[i].ready = 1;
 		pthread_create(&thread[i], NULL, eft, (void*)&thread_number[i]);
 
 	}
@@ -173,8 +174,8 @@ int main(int argc, char *argv[]){
 				else{
 				pthread_mutex_lock(&thread_manager[i].ready_mutex);
 				//printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
-				while (thread_manager[i].ready != 1)
-					pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
+				//while (thread_manager[i].ready != 1)
+					//pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
 
 				thread_manager[i].accountFrom = from;
 				thread_manager[i].accountTo = to;
