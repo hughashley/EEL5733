@@ -76,7 +76,7 @@ void *eft(void *thread_num){
 
 
 
-	pthread_cond_signal(&account1_cond);
+	pthread_cond_broadcast(&account1_cond);
 	pthread_mutex_unlock(&account1_mutex);
 
 
@@ -102,7 +102,7 @@ void *eft(void *thread_num){
 	thread_manager[thread_no].balance = 0;
 	thread_manager[thread_no].posted = 0;
 	thread_manager[thread_no].ready = 1;
-	pthread_cond_signal(&thread_manager[thread_no].ready_cond);
+	pthread_cond_broadcast(&thread_manager[thread_no].ready_cond);
 	pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
 
 
