@@ -46,7 +46,7 @@ void *eft(void *thread_num){
 
 	thread_manager[thread_no].ready = 1;
 
-	printf("%i\n", thread_no);
+	//printf("%i\n", thread_no);
 
 	while (1){
 
@@ -69,7 +69,7 @@ void *eft(void *thread_num){
 	//printf("from locked\n");
 	active_thread_from++;
 	accounts[thread_manager[thread_no].accountFrom].balance = accounts[thread_manager[thread_no].accountFrom].balance - thread_manager[thread_no].balance;
-	printf("%d withdrawn from account %d by thread %d\n", thread_manager[thread_no].balance, thread_manager[thread_no].accountFrom, thread_no);
+	//printf("%d withdrawn from account %d by thread %d\n", thread_manager[thread_no].balance, thread_manager[thread_no].accountFrom, thread_no);
 
 	active_thread_from--;
 	//printf("from unlocked\n");
@@ -87,7 +87,7 @@ void *eft(void *thread_num){
 	//printf("to locked\n");
 	active_thread_to++;
 	accounts[thread_manager[thread_no].accountTo].balance = accounts[thread_manager[thread_no].accountTo].balance + thread_manager[thread_no].balance;
-	printf("%d deposited in account %d by thread %d\n", thread_manager[thread_no].balance, thread_manager[thread_no].accountTo, thread_no);
+	//printf("%d deposited in account %d by thread %d\n", thread_manager[thread_no].balance, thread_manager[thread_no].accountTo, thread_no);
 	//printf("to unlocked\n");
 
 	active_thread_to--;
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]){
 	pthread_mutex_init(&account2_mutex, NULL);
 
 
-	printf("creating threads\n");
+	//printf("creating threads\n");
 	for (int i = 0;i< max_threads; i++){
 		thread_number[i]=i;
 		pthread_mutex_init(&thread_manager[i].ready_mutex, NULL);
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]){
 			continue;
 		//check for transfer, else create account
 		if (strcmp(token, "Transfer") == 0){
-			printf("starting transfer\n");
+			//printf("starting transfer\n");
 
 
 			thread_assigned = 0;
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]){
 					bal = atoi(strtok(NULL, ""));
 					//printf("%i", i);
 				pthread_mutex_lock(&thread_manager[i].ready_mutex);
-				printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
+				//printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
 				//while (thread_manager[i].ready != 1)
 					//pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
 
