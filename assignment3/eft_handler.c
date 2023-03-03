@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
 	int num_threads = 0;
 	int thread_number[max_threads];
 	int thread_assigned = 0;
-	int last;
+	int transfers;
 
 
 	pthread_t thread[max_threads];
@@ -171,9 +171,9 @@ int main(int argc, char *argv[]){
 
 			thread_assigned = 0;
 			while(thread_assigned == 0){
-
+			printf("%i", transfers);
 			for (int i=0; i < max_threads; i++){
-				printf("%i", i);
+
 				if (thread_manager[i].ready != 1 || thread_manager[i].count > thread_manager[i + 1].count){
 
 					continue;
@@ -200,7 +200,8 @@ int main(int argc, char *argv[]){
 
 				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				thread_assigned = 1;
-				last = i;
+				transfers ++;
+
 				break;
 				}
 
