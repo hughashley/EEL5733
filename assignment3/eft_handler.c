@@ -214,7 +214,7 @@ int main(int argc, char *argv[]){
 			bal = atoi(strtok(NULL, " "));
 			accounts[account].account_number = account;
 			accounts[account].balance = bal;
-			printf("%d %d\n", account, bal);
+			//printf("%d %d\n", account, bal);
 			num_accounts ++;
 		}
 
