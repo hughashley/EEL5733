@@ -53,8 +53,8 @@ void *eft(void *thread_num){
 
 	//pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
 
-	while(thread_manager[thread_no].posted == 0 || thread_manager[thread_no-1].posted == 1 ){
-		//printf("thread %i waiting", thread_no);
+	while(thread_manager[thread_no].posted == 0 ){
+		//printf("thread %i waiting\n", thread_no);
 		if (thread_manager[thread_no].ready == -1)
 			return NULL;
 		//pthread_cond_wait(&thread_manager[thread_no].post_cond, &thread_manager[thread_no].ready_mutex);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]){
 	int thread_number[max_threads];
 	int thread_assigned = 0;
 	int transfers = 0;
-
+	int last = -1;
 
 	pthread_t thread[max_threads];
 
@@ -172,11 +172,16 @@ int main(int argc, char *argv[]){
 			thread_assigned = 0;
 			while(thread_assigned == 0){
 			//printf("%i", transfers);
-			for (int i=0; i < max_threads; i++){
 
-				if (thread_manager[i].ready != 1 ){
+			for (int i=0; i < max_threads; i++){
+				int next = i+1;
+				if (next == max_threads){
+					next = 0;
+				}
+				if (thread_manager[i].ready != 1 || i == last && thread_manager[next].ready == 1){
 
 					continue;
+
 				}
 				else{
 
@@ -201,11 +206,13 @@ int main(int argc, char *argv[]){
 				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				thread_assigned = 1;
 				transfers ++;
+				last = i;
 
 				break;
 				}
 
 			}
+
 			}
 
 
