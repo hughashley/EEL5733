@@ -48,7 +48,7 @@ void *eft(void *thread_num){
 	thread_manager[thread_no].ready = 1;
 
 	//printf("%i\n", thread_no);
-
+	thread_manager[thread_no].count = 0;
 	while (1){
 
 	//pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
@@ -61,7 +61,7 @@ void *eft(void *thread_num){
 
 		}
 	//pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
-	thread_manager[thread_no].count = 0;
+
 	thread_manager[thread_no].ready = 0;
 
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
 	int num_threads = 0;
 	int thread_number[max_threads];
 	int thread_assigned = 0;
-	int transfers;
+	int transfers = 0;
 
 
 	pthread_t thread[max_threads];
@@ -171,10 +171,10 @@ int main(int argc, char *argv[]){
 
 			thread_assigned = 0;
 			while(thread_assigned == 0){
-			printf("%i", transfers);
+			//printf("%i", transfers);
 			for (int i=0; i < max_threads; i++){
 
-				if (thread_manager[i].ready != 1 || thread_manager[i].count > thread_manager[i + 1].count){
+				if (thread_manager[i].ready != 1 ){
 
 					continue;
 				}
@@ -225,19 +225,20 @@ int main(int argc, char *argv[]){
 
 
 	}
-
 	for (int i = 0; i < max_threads; i++){
 		while (thread_manager[i].ready != 1){
 
 		}
 			thread_manager[i].ready = -1;
-
-	}
-	for (int i = 0; i < max_threads; i++){
-
 			pthread_join(thread[i], NULL);
 
 	}
+
+//	for (int i = 0; i < max_threads; i++){
+//
+//		pthread_join(thread[i], NULL);
+//
+//	}
 
 	for (int i = 1; i <= num_accounts ; i++){
 			printf("%d %d\n", accounts[i].account_number, accounts[i].balance);
