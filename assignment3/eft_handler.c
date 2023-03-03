@@ -180,8 +180,33 @@ int main(int argc, char *argv[]){
 				if (next == max_threads){
 					next = 0;
 				}
-				if (thread_manager[i].ready != 1 || i == last || i - 1 == last){
+				if (thread_manager[i].ready != 1){
 
+					continue;
+
+				}
+				else if ( i == last ){
+
+					continue;
+
+				}
+				else if ( i+1 == last && thread_manager[i+2].ready == 1){
+					i++;
+					continue;
+
+				}
+				else if ( i+2 == last && thread_manager[i+3].ready == 1 ){
+					i+=2;
+					continue;
+
+				}
+				else if ( i+3 == last && thread_manager[i+4].ready == 1){
+					i+=3;
+					continue;
+
+				}
+				else if ( i+4 == last && thread_manager[i+5].ready == 1 ){
+					i+=4;
 					continue;
 
 				}
