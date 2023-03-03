@@ -157,7 +157,9 @@ int main(int argc, char *argv[]){
 		in_length = getline(&buf, &bufsz, stdin);
 		//check for eof
 		if (in_length < 0){
+			printf("stdin empty \n");
 				run = 0;
+				break;
 		}
 		//tokenize input
 		token = strtok(buf, " ");
@@ -178,7 +180,7 @@ int main(int argc, char *argv[]){
 				if (next == max_threads){
 					next = 0;
 				}
-				if (thread_manager[i].ready != 1 || i == last || i == last && thread_manager[next].ready == 1){
+				if (thread_manager[i].ready != 1 || i == last || i - 1 == last){
 
 					continue;
 
