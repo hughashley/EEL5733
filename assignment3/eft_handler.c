@@ -52,7 +52,7 @@ void *eft(void *thread_num){
 
 	//pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
 
-	while(thread_manager[thread_no].posted == 0){
+	while(thread_manager[thread_no].posted == 0 || thread_manager[thread_no-1].posted == 1 ){
 		//printf("thread %i waiting", thread_no);
 		if (thread_manager[thread_no].ready == -1)
 			return NULL;
@@ -64,7 +64,7 @@ void *eft(void *thread_num){
 
 
 	pthread_mutex_lock(&account1_mutex);
-	while(active_thread_from != 0)
+	while(active_thread_from != 0 )
 		pthread_cond_wait(&account1_cond, &account1_mutex);
 	//printf("from locked\n");
 	active_thread_from++;
@@ -170,9 +170,9 @@ int main(int argc, char *argv[]){
 			while(thread_assigned == 0){
 
 			for (int i=0; i < max_threads; i++){
-				printf("%i", i);
+				//printf("%i", i);
 				if (thread_manager[i].ready != 1){
-
+					i++;
 					continue;
 				}
 				else{
@@ -180,7 +180,7 @@ int main(int argc, char *argv[]){
 					from = atoi(strtok(NULL, " "));
 					to = atoi(strtok(NULL, " "));
 					bal = atoi(strtok(NULL, ""));
-					printf("%i", i);
+					//printf("%i", i);
 				pthread_mutex_lock(&thread_manager[i].ready_mutex);
 				printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
 				//while (thread_manager[i].ready != 1)
