@@ -17,6 +17,7 @@ struct transfer_data {
 	int accountFrom;
 	int accountTo;
 	int balance;
+	int count;
 };
 struct account {
 	int account_number;
@@ -60,6 +61,7 @@ void *eft(void *thread_num){
 
 		}
 	//pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
+	thread_manager[thread_no].count = 0;
 	thread_manager[thread_no].ready = 0;
 
 
@@ -102,6 +104,7 @@ void *eft(void *thread_num){
 	thread_manager[thread_no].balance = 0;
 	thread_manager[thread_no].posted = 0;
 	thread_manager[thread_no].ready = 1;
+	thread_manager[thread_no].count++;
 	pthread_cond_broadcast(&thread_manager[thread_no].ready_cond);
 	pthread_mutex_unlock(&thread_manager[thread_no].ready_mutex);
 
@@ -170,9 +173,9 @@ int main(int argc, char *argv[]){
 			while(thread_assigned == 0){
 
 			for (int i=0; i < max_threads; i++){
-				//printf("%i", i);
-				if (thread_manager[i].ready != 1 ||i == last){
-					i++;
+				printf("%i", i);
+				if (thread_manager[i].ready != 1 || thread_manager[i].count > thread_manager[i + 1].count){
+
 					continue;
 				}
 				else{
@@ -182,7 +185,7 @@ int main(int argc, char *argv[]){
 					bal = atoi(strtok(NULL, ""));
 					//printf("%i", i);
 				pthread_mutex_lock(&thread_manager[i].ready_mutex);
-				//printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
+				printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
 				//while (thread_manager[i].ready != 1)
 					//pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
 
