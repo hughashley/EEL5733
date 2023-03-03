@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
 	int num_threads = 0;
 	int thread_number[max_threads];
 	int thread_assigned = 0;
-
+	int last;
 
 
 	pthread_t thread[max_threads];
@@ -171,8 +171,8 @@ int main(int argc, char *argv[]){
 
 			for (int i=0; i < max_threads; i++){
 				//printf("%i", i);
-				if (thread_manager[i].ready != 1){
-
+				if (thread_manager[i].ready != 1 ||i == last){
+					i++;
 					continue;
 				}
 				else{
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]){
 
 				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				thread_assigned = 1;
-
+				last = i;
 				break;
 				}
 
