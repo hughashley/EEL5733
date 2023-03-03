@@ -157,7 +157,7 @@ int main(int argc, char *argv[]){
 		in_length = getline(&buf, &bufsz, stdin);
 		//check for eof
 		if (in_length < 0){
-			printf("stdin empty \n");
+			//printf("stdin empty \n");
 				run = 0;
 				break;
 		}
@@ -210,6 +210,26 @@ int main(int argc, char *argv[]){
 					continue;
 
 				}
+				else if ( i+5 == last && thread_manager[i+6].ready == 1){
+					i+=5;
+					continue;
+
+				}
+				else if ( i+6 == last && thread_manager[i+7].ready == 1 ){
+					i+=6;
+					continue;
+
+				}
+				else if ( i+7 == last && thread_manager[i+8].ready == 1){
+					i+=7;
+					continue;
+
+				}
+				else if ( i+8 == last && thread_manager[i+9].ready == 1 ){
+					i+=8;
+					continue;
+
+				}
 				else{
 
 					from = atoi(strtok(NULL, " "));
@@ -217,7 +237,7 @@ int main(int argc, char *argv[]){
 					bal = atoi(strtok(NULL, ""));
 					//printf("%i", i);
 				pthread_mutex_lock(&thread_manager[i].ready_mutex);
-				printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
+				//printf("amount: %d to: %d from: %d thread: %d\n", bal, to, from, i);
 				//while (thread_manager[i].ready != 1)
 					//pthread_cond_wait(&thread_manager[i].ready_cond, &thread_manager[i].ready_mutex);
 
@@ -259,7 +279,7 @@ int main(int argc, char *argv[]){
 
 
 	}
-	printf("join threads\n");
+	//printf("join threads\n");
 	for (int i = 0; i < max_threads; i++){
 		while (thread_manager[i].ready != 1){
 
