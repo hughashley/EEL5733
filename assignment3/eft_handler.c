@@ -171,8 +171,9 @@ int main(int argc, char *argv[]){
 
 			for (int i=0; i < max_threads; i++){
 				//printf("%i", i);
+				i = rand() % max_threads;
 				if (thread_manager[i].ready != 1){
-					i++;
+
 					continue;
 				}
 				else{
