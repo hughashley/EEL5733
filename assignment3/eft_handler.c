@@ -171,7 +171,7 @@ int main(int argc, char *argv[]){
 
 			for (int i=0; i < max_threads; i++){
 				printf("%i", i);
-				if (thread_manager[i].posted == 1 || thread_manager[i].ready != 1){
+				if (thread_manager[i].ready != 1){
 
 					continue;
 				}
@@ -191,7 +191,9 @@ int main(int argc, char *argv[]){
 				thread_manager[i].balance = bal;
 				thread_manager[i].posted = 1;
 
-
+				while(thread_manager[i].ready != 0){
+					pthread_cond_signal(&thread_manager[i].post_cond);
+				}
 
 				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				thread_assigned = 1;
