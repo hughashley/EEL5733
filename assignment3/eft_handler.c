@@ -52,7 +52,7 @@ void *eft(void *thread_num){
 
 	//pthread_mutex_lock(&thread_manager[thread_no].ready_mutex);
 
-	while(thread_manager[thread_no].posted == 0){
+	while(thread_manager[thread_no].posted == 0 || thread_manager[thread_no-1].posted == 1 ){
 		//printf("thread %i waiting", thread_no);
 		if (thread_manager[thread_no].ready == -1)
 			return NULL;
@@ -191,9 +191,9 @@ int main(int argc, char *argv[]){
 				thread_manager[i].balance = bal;
 				thread_manager[i].posted = 1;
 
-//				while(thread_manager[i].ready != 0){
-//					pthread_cond_signal(&thread_manager[i].post_cond);
-//				}
+				while(thread_manager[i].ready != 0){
+					pthread_cond_signal(&thread_manager[i].post_cond);
+				}
 
 				pthread_mutex_unlock(&thread_manager[i].ready_mutex);
 				thread_assigned = 1;
