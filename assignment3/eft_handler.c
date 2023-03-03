@@ -156,7 +156,7 @@ int main(int argc, char *argv[]){
 		//get line from stdin
 		in_length = getline(&buf, &bufsz, stdin);
 		//check for eof
-		if (in_length == -1){
+		if (in_length < 0){
 				run = 0;
 		}
 		//tokenize input
