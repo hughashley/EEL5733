@@ -178,7 +178,7 @@ int main(int argc, char *argv[]){
 				if (next == max_threads){
 					next = 0;
 				}
-				if (thread_manager[i].ready != 1 || i == last && thread_manager[next].ready == 1){
+				if (thread_manager[i].ready != 1 || i == last || i == last && thread_manager[next].ready == 1){
 
 					continue;
 
@@ -232,6 +232,7 @@ int main(int argc, char *argv[]){
 
 
 	}
+	printf("join threads\n");
 	for (int i = 0; i < max_threads; i++){
 		while (thread_manager[i].ready != 1){
 
