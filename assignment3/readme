@@ -1,0 +1,12 @@
+Hugh Ashley
+EEL5733
+Assignment 3
+
+
+
+type make to build.
+
+makefile incorporates -pthread flag to ensure it builds.
+
+to run type ./eft_handler {max num threads} < input.txt
+

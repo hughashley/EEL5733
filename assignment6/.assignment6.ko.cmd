@@ -1,0 +1,1 @@
+cmd_/home/ubuntu/UF_dev/assignment6/assignment6.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /home/ubuntu/UF_dev/assignment6/assignment6.ko /home/ubuntu/UF_dev/assignment6/assignment6.o /home/ubuntu/UF_dev/assignment6/assignment6.mod.o;  true

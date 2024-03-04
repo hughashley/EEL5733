@@ -1,0 +1,1 @@
+cmd_/home/ubuntu/UF_dev/assignment6/assignment6.mod := printf '%s\n'   assignment6.o | awk '!x[$$0]++ { print("/home/ubuntu/UF_dev/assignment6/"$$0) }' > /home/ubuntu/UF_dev/assignment6/assignment6.mod

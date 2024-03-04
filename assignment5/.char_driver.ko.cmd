@@ -1,0 +1,1 @@
+cmd_/home/ubuntu/UF_dev/assignment5/char_driver.ko := ld -r -EL  -maarch64elf -z noexecstack --no-warn-rwx-segments --build-id=sha1  -T scripts/module.lds -o /home/ubuntu/UF_dev/assignment5/char_driver.ko /home/ubuntu/UF_dev/assignment5/char_driver.o /home/ubuntu/UF_dev/assignment5/char_driver.mod.o;  true
