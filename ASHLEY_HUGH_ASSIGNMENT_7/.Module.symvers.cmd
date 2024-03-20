@@ -1,0 +1,1 @@
+cmd_/mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/Module.symvers := sed 's/\.ko$$/\.o/' /mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/modules.order | scripts/mod/modpost -m -a  -o /mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/Module.symvers -e -i Module.symvers   -T -

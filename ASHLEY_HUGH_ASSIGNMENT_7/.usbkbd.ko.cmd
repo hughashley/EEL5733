@@ -1,0 +1,1 @@
+cmd_/mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/usbkbd.ko := ld -r -EL  -maarch64elf -z noexecstack --build-id=sha1  -T scripts/module.lds -o /mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/usbkbd.ko /mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/usbkbd.o /mnt/hgfs/UF_dev/assignment7/ASHLEY_HUGH_ASSIGNMENT_7/usbkbd.mod.o;  true
